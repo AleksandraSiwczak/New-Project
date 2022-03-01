@@ -1,5 +1,5 @@
 import "./App.css";
-import { useEffect, useState } from "react";
+
 
 import { Chart } from "./Chart";
 import { Main } from "./Main";
@@ -14,7 +14,7 @@ function App() {
   return (
     <>
       <div className="App">
-        {/* <div dangerouslySetInnerHTML={{ __html: item?.text }} />  */}
+       
       </div>
       <BrowserRouter>
         <Routes>

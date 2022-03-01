@@ -1,41 +1,35 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from "react-router-dom";
+import { useProvidedArticles } from "./contexts/ArticlesContext";
+import React, { useEffect } from "react";
+import "./Main.css";
+import {format, fromUnixTime} from 'date-fns';
 
-const pickRandomElements = (howMany, elements) => {
-  const ids = [...elements];
-  return Array.from({ length: howMany }, () => ids.splice(Math.floor((Math.random() * ids.length)), 1)[0])
-}
 
-export const Main = ({ item }) => {
-  const [articles, setArticles] = useState([]);
+export const Main = () => {
+  const { articles, fetchArticles } = useProvidedArticles();
 
   useEffect(() => {
-    fetch("https://hacker-news.firebaseio.com/v0/topstories/.json")
-      .then((response) => response.json())
-      .then((ids) => {
-        const randomIds = pickRandomElements(10, ids);
+    fetchArticles();
+  }, [fetchArticles]);
 
-        const articlePromises = randomIds.map((id) => {
-          return fetch(
-            `https://hacker-news.firebaseio.com/v0/item/${id}.json`
-          ).then((res) => res.json());
-        });
-
-        return Promise.all(articlePromises).then((articles) => {
-          setArticles(articles);
-        });
-      });
-  }, []);
-
-  console.log(articles);
 
   return (
     <>
-      {articles?.map((article) => {
+      {articles.map((article) => {
+       
         return (
-          <div key={article.id}>
-            <h1><Link to={`/details/${article?.id}`}>{article?.title}</Link></h1>
-            <div dangerouslySetInnerHTML={{ __html: article?.text }} />
+          <div className="Articles" key={article.id}>
+            <h1>{article.title}</h1>
+            <p>Author: {article.by}</p>
+            <p>Date: {format(fromUnixTime(article.time),"PPP")}</p>
+          
+            <p>Data: {article.time}</p>
+           
+            <p>Score: {article.score}</p>
+
+            <Link to={`/details/${article?.id}`}><button>Show details</button></Link>
+         
+            <div className="ChartButton"><NavLink to="/chart"></NavLink></div>
           </div>
         );
       })}
